@@ -1,0 +1,1 @@
+{"frames":[{"character_number":0,"end_character_number":0,"end_line_number":0,"file":"","func":"ggplot(donazioni_italia)","line_number":0}],"message":"Error in ggplot(donazioni_italia) : object 'donazioni_italia' not found\n"}

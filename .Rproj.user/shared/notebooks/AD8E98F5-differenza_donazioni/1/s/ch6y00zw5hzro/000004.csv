@@ -1,0 +1,17 @@
+"0","ggplot(donazioni_italia) + 
+  geom_sf(aes(fill=Differenza), color = ""white"", alpha = .8) +
+  scale_fill_distiller(palette = ""Reds"", direction = -1, """") +
+  theme_void() +
+  theme(panel.grid.major = element_line(colour=""transparent"")) +
+  labs(title=""Differenza nelle donazioni di sangue in Italia"",
+       subtitle = ""tra il 2015 e il 2016"",
+       caption = ""Dati: Osservatorio Nazionale sulla Salute"") +
+  geom_text(aes(label = case_when(
+                  Differenza > 0 ~ paste0(""+"", Differenza, ""%""),
+                  TRUE ~ paste0(Differenza, ""%"")),
+                  x = lon, y = lat),
+            size = 3) +
+  facet_wrap(~Regione)
+"
+"2","Error in ggplot(donazioni_italia) : object 'donazioni_italia' not found
+"

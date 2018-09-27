@@ -1,0 +1,9 @@
+{
+    "path" : "~/Documents/Inchieste/donazioni/differenza_donazioni",
+    "sortOrder" : [
+        {
+            "ascending" : true,
+            "columnIndex" : 2
+        }
+    ]
+}

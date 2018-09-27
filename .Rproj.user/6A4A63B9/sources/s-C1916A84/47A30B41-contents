@@ -1,0 +1,86 @@
+---
+title: "Change in blood donation in Italy<br />from 2015 to 2016"
+author: "Federico Caruso"
+date: "27/09/2018"
+output:
+  html_document: 
+    toc: true
+    toc_float: true
+---
+
+> Following is an exercise I made to accomplish the final module of the Knight Foundation course "Introduction to R for Journalists: How to Find Great Stories in Data".
+
+Blood donations in Italy are slightly decreasing in the last years. On the report [OsservaSalute 2017](https://www.osservatoriosullasalute.it/osservasalute/rapporto-osservasalute-2017) I found data about the change in percentage by region from 2015 to 2016.
+
+```{r setup, warning=FALSE, message=FALSE}
+# Load packages
+library(DT)
+library(tidyverse)
+library(ggplot2)
+library(sf)
+options(device = "X11")
+X11.options(type = "cairo")
+library(tidyverse)
+library(eurostat)
+library(readr)
+```
+
+# Data preparation
+I collected data manually and put them in a csv table. Let's take a look at the dataset.
+
+```{r import donations data, warning=FALSE, message=FALSE}
+donazioni <- read_csv2("../data/differenza_donazioni_16_15.csv")
+datatable(donazioni)
+```
+
+I wanted to represent these data on a choropleth map, so I used europe library to import and filter geospatial information.
+
+``` {r import geospatial data, warning=FALSE, message=FALSE}
+europe <- get_eurostat_geospatial(output_class = "sf", resolution = "60",
+                                  nuts_level = "2", year = "2016", cache = TRUE,
+                                  update_cache = FALSE, cache_dir = NULL)
+
+
+italia <- subset(europe, europe$CNTR_CODE=="IT")
+glimpse(italia)
+```
+
+Let's tidy up a bit the table, so the region names fit with the other table, and then join the two.
+
+``` {r join tables, warning=FALSE, message=FALSE}
+italia <- italia %>% 
+  mutate(Regione=case_when(
+    NUTS_NAME == "Provincia Autonoma di Bolzano/Bozen" ~ "Provincia Autonoma di Bolzano",
+    NUTS_NAME == "Valle d'Aosta/Vallée d'Aoste" ~ "Valle d'Aosta",
+    TRUE ~ NUTS_NAME
+  ))
+
+donazioni_italia <- left_join(italia, donazioni)
+```
+
+Now I extract longitude and latitude from the italia table, so I can put them on a map with sf library.
+
+``` {r extract lon lat, warning=FALSE, message=FALSE}
+donazioni_italia <- donazioni_italia %>% 
+  mutate(lon = map_dbl(geometry, ~st_centroid(.x)[[1]]),
+         lat = map_dbl(geometry, ~st_centroid(.x)[[2]]))
+```
+
+# Map
+And now, the plot!
+
+``` {r plot, warning=FALSE, message=FALSE}
+ggplot(donazioni_italia) + 
+  geom_sf(aes(fill=Differenza), color = "white", alpha = .8) +
+  scale_fill_distiller(palette = "Reds", direction = -1, "") +
+  theme_void() +
+  theme(panel.grid.major = element_line(colour="transparent")) +
+  labs(title="Differenza nelle donazioni di sangue in Italia",
+       subtitle = "tra il 2015 e il 2016",
+       caption = "Dati: Osservatorio Nazionale sulla Salute") +
+  geom_text(aes(label = case_when(
+                  Differenza > 0 ~ paste0("+", Differenza, "%"),
+                  TRUE ~ paste0(Differenza, "%")),
+                  x = lon, y = lat),
+            size = 3)
+```

@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1538053933527.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1467211348",
+    "id" : "A9385D24",
+    "lastKnownWriteTime" : 1538045560,
+    "last_content_update" : 1538057889322,
+    "path" : "~/Documents/Inchieste/donazioni/differenza_donazioni/scripts/donazioni.R",
+    "project_path" : "scripts/donazioni.R",
+    "properties" : {
+        "cursorPosition" : "44,21",
+        "scrollLine" : "23"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
